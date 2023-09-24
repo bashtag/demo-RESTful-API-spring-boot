@@ -1,0 +1,31 @@
+version: '3.1'
+services:
+  my-app:
+    image: 050220932180.dkr.ecr.us-east-1.amazonaws.com/my-app:1.0
+    ports:
+      - '8080:8080'
+  mongodb:
+    image: mongo
+    environment:
+      - 'MONGO_INITDB_DATABASE=user-account'
+      - 'MONGO_INITDB_ROOT_PASSWORD=password'
+      - 'MONGO_INITDB_ROOT_USERNAME=admin'
+    ports:
+      - '27017:27017'
+    volumes:
+      - 'mongo-data:/data/db'
+  mongoex:
+    image: mongo-express
+    environment:
+      - 'ME_CONFIG_MONGODB_ADMINUSERNAME=admin'
+      - 'ME_CONFIG_MONGODB_ADMINPASSWORD=password'
+      - 'ME_CONFIG_MONGODB_SERVER=mongodb'
+    ports:
+      - '8081:8081'
+    depends_on:
+      - mongodb
+    # this is to catch the mongodb service when it is up and running
+    restart: unless-stopped
+volumes:
+  mongo-data:
+    driver: local
